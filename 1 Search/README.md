@@ -124,3 +124,126 @@ of the path to that node.
 
 
 ## Informed Search
+All the previous algorithms worked in a similar manner, with a small change in the
+data structure for the fringe being used(stack, queue or priority queue). They all 
+followed the same general tree search algorithm, and searched in every direction 
+for the goal. These uninformed search algorithms are useful when we do not know 
+anything about the goal.
+
+When we have some knowledge about the goal, we can use that to reduce the required 
+computation for the search. If we know that the goal is towards the east, then we 
+should give east a higher priority while searching, so as to reduce the number of 
+steps taken towards the west, ie. in the opposite direction.   
+
+#### Search Heuristics
+A heuristic is nothing but a mapping from states to numbers. It is a function that
+estimates how close a state is to a goal. A heuristic is specially designed for a 
+the problem in hand. A good example for this can be the path finding problem we 
+saw in uninformed search. We know the coordinated of the goal state so our heuristic 
+in that case could be the 
+- [Euclidean_distance](https://en.wikipedia.org/wiki/Euclidean_distance) 
+- [Manhattan distance](https://en.wiktionary.org/wiki/Manhattan_distance)
+
+With every step we are planning to take we could feed it to our heuristic function
+and that would give us a numerical distance to goal state if we take that step. 
+We can use this to give the states that take us close to the goal higher priority.
+Using this heuristic will reduce the computation required to find the goal as we 
+dont search much in the wrong direction, that takes us away from the goal. We only
+move in the direction of the goal.
+
+#### Greedy Search (Best First Strategy)
+In this algorithm we use just the heuristic value to find the path to the goal. 
+We expand the node that seems closest to the goal according to the heuristic. 
+There is a problem if we do this. What if there are barriers in the way? This 
+algorithm would not find the optimal path to the goal is there are obstacles in
+the path to the goal. It would be like a badly guided Depth first search. 
+
+#### A* Search 
+###### (Uniform Cost Search + Greedy Search = A* Search)
+We add a controller of path cost, that controls the greedy search from choosing 
+a non optimal goal path. The greedy search gives direction to the Uniform cost 
+search algorithm. 
+
+We use two function in this -
+- g(state) -- Cumulative cost Function (UCS)
+- h(state) -- Heuristic Function (Greedy)
+
+A* algorithm orders it search by the sum
+- f(state) = g(state) + h(state)
+
+A* search gives us the optimal path given the condition that the heuristic function
+used is-
+- Admissible and
+- Consistent
+
+#### Admissible Heuristic
+Inadmissible heuristics (also known as pessimistic) break optimality by trapping 
+good plans on the fringe. Admissible(optimistic) heuristics slow down bad plans but
+never overweight true costs. 
+
+A heuristic H is admissible(optimistic) if :
+
+``` 0 <= H(state) <= H*(state) ```
+
+What this formula says is the Heuristic cost to the goal state, ie. predicted 
+cost from that state to goal, should not be greater than the true cost to the 
+nearest goal state. 
+
+Coming up with a admissible heuristic is most of what is involved in using A* in
+practice. A* search expands mainly towards the goal, but does hedge its bets 
+to ensure optimality. 
+
+#### Consistency of Heuristics
+Main idea: ```estimated_heuristic_cost <= actual_cost(for each arc)```
+- Admissibility : ```heuristic_cost <= actual_cost(to goal)```
+- Consistency : ```heuristic_arc_cost <= actual_cost(for arc)```
+
+example A and C are two intermediate states, which are not goal state. 
+H is the heuristic being used. For H to be consistent it should satisfy the following
+condition for each of its arcs : 
+
+```(H(A) - H(C)) <= cost(A to C)```
+
+F values along a path never decreases:
+```H(A) <= [ cost(A to C) + H(C) ]```
+
+If this condition is satisfied be a heuristic, then A* search is guaranteed to be 
+optimal. In general, most of the admissible heuristics tend to be consistent, especially
+if from a relaxed problem.
+
+#### Creating a Heuristic
+Most of the work in solving hard search problems optimally is in coming up with 
+an Admissible Heuristic. Often admissible heuristics are solution to relaxed 
+problems where new actions are available(an example of a relaxed problem can be
+for finding the path between two points you can draw a straight line between 
+the two points, that is the relaxed solution to the problem, without considering
+the barriers and the action space, the shortest distance you can find). Inadmissible
+heuristics are often useful too, but optimality is not guaranteed. 
+
+We should not make a heuristic too complicated too. The main aim of introducing 
+a heuristic is to reduce the computation required for finding the goal, but if 
+we increase the computation per state too much that would reduce the unnecessary 
+steps explored but that would be very costly per state. With A*, we trade off 
+between quality of estimate and work per node.
+
+####Some areas where A* search is used:
+- Pathing/Routing problems
+- Resource Planning problem
+- Robot motion planning
+- Language analysis
+- Machine Translation
+- Speech Recognition
+
+
+## Graph Search
+#### Idea : Never expand a state twice
+#### Implementation :
+- Tree search + set of expanded nodes(closed set)
+
+Expand the search tree node by node, but before expanding the node check to make 
+sure it has never been expanded before. If not new skip the node, if new then add
+it to the closed set and expand the node. Store the closed set as a set(), that
+does not allow duplicate values in it, not a list. 
+
+This addition of the closed set prevents the algorithm from being stuck in cycles.
+
