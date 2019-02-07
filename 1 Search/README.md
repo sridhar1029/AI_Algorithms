@@ -226,7 +226,7 @@ we increase the computation per state too much that would reduce the unnecessary
 steps explored but that would be very costly per state. With A*, we trade off 
 between quality of estimate and work per node.
 
-####Some areas where A* search is used:
+#### Some areas where A* search is used:
 - Pathing/Routing problems
 - Resource Planning problem
 - Robot motion planning
